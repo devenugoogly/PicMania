@@ -101,7 +101,7 @@ public class LoginActivity extends Activity {
     public void updateLogin(boolean rtn){
         Log.i("Value returned","Value "+rtn);
         if(rtn){
-            Intent albumIntent = new Intent(this,AlbumActivity.class);
+            Intent albumIntent = new Intent(this,SearchActivity.class);
             startActivity(albumIntent);
         }
 
