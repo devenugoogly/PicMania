@@ -1,11 +1,14 @@
 package com.example.supportedfiles;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.root.picmania.AlbumActivity;
 import com.example.root.picmania.LoginActivity;
+import com.example.root.picmania.PictureViewActivity;
 import com.example.root.picmania.SearchActivity;
 import com.raweng.built.BuiltError;
 import com.raweng.built.BuiltObject;
@@ -15,6 +18,9 @@ import com.raweng.built.BuiltUser;
 import com.raweng.built.QueryResult;
 import com.raweng.built.QueryResultsCallBack;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +51,15 @@ public class NetworkActivity extends AsyncTask<String, Void, Void> {
         }else if(workType == CustomDataClass.SEARCH_PICTURE) {
             String search_text = params[0];
             fetchSearchResults(search_text);
+        }else if(workType == CustomDataClass.FETCH_SINGLE_PIC){
+            String url = params[0];
+            String name = params[1];
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
+//                ((PictureViewActivity)activity).updateImage(bitmap,name);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

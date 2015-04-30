@@ -2,6 +2,8 @@ package com.example.root.picmania;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,26 +15,41 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.supportedfiles.AlbumClass;
+import com.example.supportedfiles.CustomDataClass;
 import com.example.supportedfiles.GridAlbumViewAdapter;
 import com.example.supportedfiles.GridPictureViewAdapter;
+import com.example.supportedfiles.NetworkActivity;
 import com.example.supportedfiles.PictureClass;
 import com.raweng.built.BuiltError;
+import com.raweng.built.BuiltFile;
+import com.raweng.built.BuiltImageDownloadCallback;
 import com.raweng.built.BuiltObject;
 import com.raweng.built.BuiltQuery;
+import com.raweng.built.BuiltUser;
 import com.raweng.built.QueryResult;
 import com.raweng.built.QueryResultsCallBack;
+import com.raweng.built.view.BuiltImageView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
-public class PictureViewActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener, AbsListView.OnScrollListener {
+public class PictureViewActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener{
 
     private String album_name;
     private List<PictureClass> dataItems;
     private GridPictureViewAdapter adapter;
     private GridView view;
     private int pageNumber;
+    private BuiltUser builtUserObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +58,8 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
 
         pageNumber = 0;
         view = (GridView)findViewById(R.id.gridView3);
-        view.setOnScrollListener(this);
 
+        builtUserObject = new BuiltUser();
 
         dataItems = new ArrayList<PictureClass>();
         Bundle extras = getIntent().getExtras();
@@ -56,8 +73,8 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
         BuiltQuery query = new BuiltQuery("picture");
 
         query.where("album",album_name);
-        query.limit(4);
-        query.skip(skipSize);
+//        query.limit(4);
+//        query.skip(skipSize);
 
         query.exec(new QueryResultsCallBack() {
             List<BuiltObject> pictures;
@@ -66,11 +83,14 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
                 // the queryResultObject will contain the objects of the class
                 // here's the object we just created
                 pictures = queryResultObject.getResultObjects();
+                Log.i("Image Data",queryResultObject.getResultObjects().get(0).getJSONObject("image").toString());
+
                 for(BuiltObject object : pictures){
                     Log.i("Data", "Name " + object.get("name"));
                     Log.i("Data","Title "+object.get("caption"));
                 }
             }
+
 
             @Override
             public void onError(BuiltError builtErrorObject) {
@@ -96,10 +116,25 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
     private void updatePictures(List<BuiltObject> pictures)
     {
         Log.i("Size"," "+pictures.size());
+//        JSONObject jsonField = pictures.get(0).get("image").toJSON();
+////        Log.i("JSON OBJECT",jsonField.toString());
+//        try {
+//            String imageUrl = jsonField.getString("url");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         for (BuiltObject obj : pictures) {
-//            Drawable image = crea
-            PictureClass objPic = new PictureClass(obj.get("name").toString(), obj.get("caption").toString(), getDrawable(R.drawable.album));
+            JSONObject jsonField = obj.getJSONObject("image");
+            String url = null;
+            try {
+                url = jsonField.get("url").toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.i("URL",url);
+            PictureClass objPic = new PictureClass(obj.get("name").toString(), obj.get("caption").toString(),url );
             dataItems.add(objPic);
+
         }
         Log.i("Size"," "+dataItems.size());
 
@@ -153,16 +188,5 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
 
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-       ++pageNumber;
-        int skipLimit = pageNumber*4;
-
-        fetchPictures(album_name,++pageNumber);
-    }
 }

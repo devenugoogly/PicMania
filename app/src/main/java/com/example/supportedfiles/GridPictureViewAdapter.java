@@ -1,6 +1,8 @@
 package com.example.supportedfiles;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.root.picmania.R;
+import com.loopj.android.image.SmartImageView;
 
 import java.util.List;
 
@@ -47,12 +50,12 @@ public class GridPictureViewAdapter extends BaseAdapter{
         if(convertView == null) {
             // inflate the GridView item layout
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            convertView = inflater.inflate(R.layout.gridview_item, parent, false);
+            convertView = inflater.inflate(R.layout.picture_grid_file, parent, false);
 
             // initialize the view holder
             viewHolder = new ViewHolder();
-            viewHolder.ivIcon = (ImageView) convertView.findViewById(R.id.ivIcon);
-            viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+            viewHolder.ivIcon = (SmartImageView) convertView.findViewById(R.id.avatar);
+            viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle1);
             convertView.setTag(viewHolder);
         } else {
             // recycle the already inflated view
@@ -61,14 +64,15 @@ public class GridPictureViewAdapter extends BaseAdapter{
 
         // update the item view
         PictureClass item = mItems.get(position);
-        viewHolder.ivIcon.setImageDrawable(item.thumbnail);
         viewHolder.tvTitle.setText(item.name);
+        Log.i("Received url",item.imageUrl);
+        viewHolder.ivIcon.setImageUrl(item.imageUrl);
 
         return convertView;
     }
 
     private static class ViewHolder {
-        ImageView ivIcon;
+        SmartImageView ivIcon;
         TextView tvTitle;
     }
 }

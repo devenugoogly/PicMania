@@ -9,5 +9,6 @@ public class CustomDataClass {
     public static final int FETCH_ALBUM = 2;
     public static final int FETCH_PICTURE = 3;
     public static final int SEARCH_PICTURE = 4;
+    public static final int FETCH_SINGLE_PIC = 5;
     public static String email="deven@gmail.com";
 }

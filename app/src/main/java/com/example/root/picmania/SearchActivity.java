@@ -77,8 +77,8 @@ public class SearchActivity extends Activity implements View.OnClickListener, Ad
 
         Log.i("Size"," "+pictures.size());
         for (BuiltObject obj : pictures) {
-            PictureClass objPic = new PictureClass(obj.get("name").toString(), obj.get("caption").toString(), getDrawable(R.drawable.album));
-            dataItems.add(objPic);
+//            PictureClass objPic = new PictureClass(obj.get("name").toString(), obj.get("caption").toString(), getDrawable(R.drawable.album));
+//            dataItems.add(objPic);
         }
         Log.i("Size"," "+dataItems.size());
 

@@ -1,5 +1,6 @@
 package com.example.supportedfiles;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -11,10 +12,12 @@ public class PictureClass {
     public String album;
     public String caption;
     public String location;
+    public String imageUrl;
 
-    public PictureClass(String name,String caption,Drawable thumbnail){
+    public PictureClass(String name,String caption,String url){
         this.name = name;
         this.caption = caption;
-        this.thumbnail = thumbnail;
+//        this.thumbnail = thumbnail;
+        this.imageUrl = url;
     }
 }
