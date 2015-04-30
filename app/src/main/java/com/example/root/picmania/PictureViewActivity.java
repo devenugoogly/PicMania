@@ -212,8 +212,9 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
 //            NetworkActivity pictureNetworkActivity = new NetworkActivity(CustomDataClass.FETCH_PICTURE,AlbumActivity.this,builtUserObject);
 //            pictureNetworkActivity.execute(objAlbum.title);
 //        }
-        Intent pictureIntent = new Intent(this,PictureViewActivity.class);
-        pictureIntent.putExtra("album_name",objPicture.name);
+        Intent pictureIntent = new Intent(this,PhotoActivity.class);
+        pictureIntent.putExtra("image",objPicture.imageUrl);
+        pictureIntent.putExtra("caption",objPicture.caption);
         startActivity(pictureIntent);
 
 

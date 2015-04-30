@@ -1,15 +1,21 @@
 package com.example.root.picmania;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.supportedfiles.PhotoCommentViewAdapter;
 import com.example.supportedfiles.PhotoComments;
+import com.loopj.android.image.SmartImage;
+import com.loopj.android.image.SmartImageView;
 import com.raweng.built.BuiltUser;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -20,7 +26,27 @@ public class PhotoActivity extends Activity implements AdapterView.OnItemClickLi
 
     private List<PhotoComments> dataItems;
     private PhotoCommentViewAdapter adapter;
+    private String caption;
+    private String imageUrl;
+    private SmartImageView image;
+    private TextView textView;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_photo);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            caption = extras.getString("caption");
+            imageUrl = extras.getString("image");
+        }
+
+        image = (SmartImageView)findViewById(R.id.avatar1);
+        image.setImageUrl(imageUrl);
+
+        textView = (TextView)findViewById(R.id.caption);
+        textView.setText(caption);
+    }
     @Override
     public void onClick(View v) {
 

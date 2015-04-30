@@ -69,6 +69,10 @@ connection state changes
             android:name=".PictureViewActivity"
             android:label="@string/title_activity_picture_view" >
         </activity>
+        <activity
+            android:name=".PhotoActivity"
+            android:label="@string/title_activity_picture_view" >
+        </activity>
     </application>
 
 </manifest>
