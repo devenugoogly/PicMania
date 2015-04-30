@@ -41,7 +41,7 @@ connection state changes
         </receiver>
 
         <activity
-            android:name=".SearchActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -62,8 +62,12 @@ connection state changes
             android:label="@string/title_activity_album_demo" >
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:label="LoginActivity" >
+            android:name=".SearchActivity"
+            android:label="SearchActivity" >
+        </activity>
+        <activity
+            android:name=".PictureViewActivity"
+            android:label="@string/title_activity_picture_view" >
         </activity>
     </application>
 

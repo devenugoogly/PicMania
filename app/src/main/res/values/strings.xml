@@ -11,5 +11,6 @@
     <string name="icon_content_description">Hello blank fragment</string>
     <string name="title_activity_album_demo">AlbumDemo</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_picture_view">PictureViewActivity</string>
 
 </resources>

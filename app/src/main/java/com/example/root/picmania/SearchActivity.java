@@ -7,12 +7,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 
 import com.example.supportedfiles.AlbumClass;
+import com.example.supportedfiles.CustomDataClass;
 import com.example.supportedfiles.GridAlbumViewAdapter;
 import com.example.supportedfiles.GridPictureViewAdapter;
+import com.example.supportedfiles.NetworkActivity;
 import com.example.supportedfiles.PictureClass;
+import com.raweng.built.Built;
 import com.raweng.built.BuiltObject;
 import com.raweng.built.BuiltUser;
 
@@ -25,12 +30,24 @@ public class SearchActivity extends Activity implements View.OnClickListener, Ad
     BuiltUser builtUserObject = new BuiltUser();
     private List<PictureClass> dataItems;
     private GridPictureViewAdapter adapter;
+    private EditText searchText;
+    private Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         dataItems = new ArrayList<PictureClass>();
+
+        try {
+            Built.initializeWithApiKey(SearchActivity.this, "blt643f5d49ff2042cb", "0000011");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        searchText = (EditText)findViewById(R.id.editText);
+        btn = (Button)findViewById(R.id.button);
+        btn.setOnClickListener(this);
     }
 
 
@@ -58,13 +75,15 @@ public class SearchActivity extends Activity implements View.OnClickListener, Ad
 
     public void updateData(List<BuiltObject> pictures) {
 
+        Log.i("Size"," "+pictures.size());
         for (BuiltObject obj : pictures) {
             PictureClass objPic = new PictureClass(obj.get("name").toString(), obj.get("caption").toString(), getDrawable(R.drawable.album));
             dataItems.add(objPic);
         }
+        Log.i("Size"," "+dataItems.size());
 
         adapter = new GridPictureViewAdapter(this, dataItems);
-        GridView gridView = (GridView) findViewById(R.id.gridView);
+        GridView gridView = (GridView) findViewById(R.id.gridView2);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
     }
@@ -76,6 +95,14 @@ public class SearchActivity extends Activity implements View.OnClickListener, Ad
 
     @Override
     public void onClick(View v) {
+        if(v.getId() == R.id.button){
+            Log.i("Data","Button clicked");
+            String searchString = searchText.getText().toString();
+            Log.i("Text"," "+searchString);
 
+            NetworkActivity searchNetworkActivity = new NetworkActivity(CustomDataClass.SEARCH_PICTURE,SearchActivity.this,builtUserObject);
+            searchNetworkActivity.execute(searchString);
+
+        }
     }
 }

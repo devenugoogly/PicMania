@@ -10,71 +10,100 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.example.supportedfiles.AlbumClass;
 import com.example.supportedfiles.CustomDataClass;
 import com.example.supportedfiles.GridAlbumViewAdapter;
 import com.example.supportedfiles.NetworkActivity;
+import com.raweng.built.BuiltError;
 import com.raweng.built.BuiltObject;
+import com.raweng.built.BuiltQuery;
 import com.raweng.built.BuiltUser;
+import com.raweng.built.QueryResult;
+import com.raweng.built.QueryResultsCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 
-public class AlbumActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class AlbumActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener{
 
     BuiltUser builtUserObject = new BuiltUser();
     private List<AlbumClass> dataItems;
     private GridAlbumViewAdapter adapter;
+    private int page_number;
+    private Button left,right;
+    private TextView textView;
+    private int totalPageCount;
+    private final static int LIMIT = 12;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
+        page_number = 0;
+
+        left = (Button)findViewById(R.id.button2);
+        right = (Button)findViewById(R.id.button3);
+        textView = (TextView)findViewById(R.id.textView);
+
+        left.setOnClickListener(this);
+        right.setOnClickListener(this);
+
         dataItems = new ArrayList<AlbumClass>();
-        fetchData();
+        textView.setText("Page 0/0");
+        fetchData(0);
     }
 
 
-    private void fetchData(){
-        NetworkActivity albumActivity = new NetworkActivity(CustomDataClass.FETCH_ALBUM, AlbumActivity.this,builtUserObject);
-        albumActivity.execute();
-//        BuiltQuery query = new BuiltQuery("album");
-//
-//        query.exec(new QueryResultsCallBack() {
-//            List<BuiltObject> albums;
-//            @Override
-//            public void onSuccess(QueryResult queryResultObject) {
-//                // the queryResultObject will contain the objects of the class
-//                // here's the object we just created
-//                albums = queryResultObject.getResultObjects();
-//                for(BuiltObject object : albums){
-//                    Log.i("Data","Name "+object.get("name"));
-//                    Log.i("Data","Title "+object.get("title"));
-//                }
-//            }
-//
-//            @Override
-//            public void onError(BuiltError builtErrorObject) {
-//                // query failed
-//                // the message, code and details of the error
-//                Log.i("error: ", "" + builtErrorObject.getErrorMessage());
-//                Log.i("error: ", "" + builtErrorObject.getErrorCode());
-//                Log.i("error: ", "" + builtErrorObject.getErrors());
-//            }
-//
-//            @Override
-//            public void onAlways() {
-//                // write code here that you want to execute
-//                // regardless of success or failure of the operation
-//
-//            }
-//        });
+    private void fetchData(int skipSize){
+        BuiltQuery query = new BuiltQuery("album");
+        query.skip(skipSize);
+        query.limit(LIMIT);
+        query.includeCount();
+        Log.i("Method","Fetch Data Called");
+        query.exec(new QueryResultsCallBack() {
+            List<BuiltObject> albums;
+            @Override
+            public void onSuccess(QueryResult queryResultObject) {
+                // the queryResultObject will contain the objects of the class
+                // here's the object we just created
+                albums = queryResultObject.getResultObjects();
+                Log.i("Count", " " + queryResultObject.getCount());
+                totalPageCount = queryResultObject.getCount();
+
+                for(BuiltObject object : albums){
+                    Log.i("Data","Name "+object.get("name"));
+                    Log.i("Data","Title "+object.get("description"));
+
+                }
+            }
+
+            @Override
+            public void onError(BuiltError builtErrorObject) {
+                // query failed
+                // the message, code and details of the error
+                Log.i("error: ", "" + builtErrorObject.getErrorMessage());
+                Log.i("error: ", "" + builtErrorObject.getErrorCode());
+                Log.i("error: ", "" + builtErrorObject.getErrors());
+            }
+
+            @Override
+            public void onAlways() {
+                // write code here that you want to execute
+                // regardless of success or failure of the operation
+                if(albums.size() > 0){
+                    updateData(albums);
+                }
+            }
+        });
 //
     }
 
@@ -108,7 +137,7 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
     public void updateData(List<BuiltObject> albums){
 
         for(BuiltObject obj : albums){
-            AlbumClass objAlbum = new AlbumClass(obj.get("name").toString(),obj.get("title").toString(),getDrawable(R.drawable.album));
+            AlbumClass objAlbum = new AlbumClass(obj.get("name").toString(),obj.get("description").toString(),getDrawable(R.drawable.album));
             dataItems.add(objAlbum);
         }
 
@@ -117,49 +146,42 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
 
-////        GridLayout gridLayout = (GridLayout) findViewById(R.id.gridLayout);
-////        gridLayout.setColumnCount(3);
-////        gridLayout.setRowCount(3);
-//
-//        GridView gridView = (GridView)findViewById(R.id.gridView);
-//
-//
-//        FragmentManager fragmentManager = getFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-////
-////        ArrayList<AlbumFragment> albumsList = new ArrayList<AlbumFragment>();
-////
-//        dataItems = new ArrayList<AlbumDemo>();
-//        Log.i("Fragment","Inside update data");
-//       for(BuiltObject obj : albums) {
-////           albumsList.add(obj);
-//////            Button btn = new Button(this);
-//////            btn.setBackgroundResource(R.drawable.album);
-//////            gridLayout.addView(btn);
-////           Log.i("Fragment","Adding fragment "+gridLayout.getId());
-//            AlbumDemo demo = new AlbumDemo();
-////           albumsList.add(fragment);
-//           Log.i("Data"," "+obj.get("name").toString());
-////           dataItems.add(obj.get("name").toString());
-//           dataItems.add(demo);
-////
-////
-////            fragmentTransaction.add(gridLayout.getId(), fragment);
-//        }
-//        adapter = new ArrayAdapter<AlbumDemo>(this,android.R.layout.simple_list_item_1,dataItems);
-////        ArrayAdapter<AlbumFragment> adapter = new ArrayAdapter<AlbumFragment>(this,android.R.layout.simple_gallery_item,albumsList);
-//        gridView.setAdapter(adapter);
-////        fragmentTransaction.commit();
+        textView.setText("Page "+page_number+1+" of "+totalPageCount/LIMIT);
+
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.i("Position"," "+position);
+        AlbumClass objAlbum = dataItems.get(position);
+//        if(objAlbum!=null){
+//            NetworkActivity pictureNetworkActivity = new NetworkActivity(CustomDataClass.FETCH_PICTURE,AlbumActivity.this,builtUserObject);
+//            pictureNetworkActivity.execute(objAlbum.title);
+//        }
+        Intent pictureIntent = new Intent(this,PictureViewActivity.class);
+        pictureIntent.putExtra("album_name",objAlbum.title);
+        startActivity(pictureIntent);
+
+
     }
 
     @Override
     public void onClick(View v) {
 
+        if(v.getId() == R.id.button3){
+            dataItems.clear();
+            page_number++;
+            int skipSize = page_number*2;
+            fetchData(skipSize);
+        }
+        else if(v.getId() == R.id.button2){
+            dataItems.clear();
+            page_number--;
+            int skipSize = page_number*2;
+            fetchData(skipSize);
+        }
     }
+
+
 }

@@ -37,10 +37,12 @@ public class NetworkActivity extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         if(workType == CustomDataClass.LOGIN){
             login();
-        }
-        else if(workType == CustomDataClass.FETCH_ALBUM){
+        }else if(workType == CustomDataClass.FETCH_ALBUM){
             fetchData();
-        } else if(workType == CustomDataClass.SEARCH_PICTURE) {
+        }else if(workType == CustomDataClass.FETCH_PICTURE){
+            String album_name = params[0];
+            fetchPictures(album_name);
+        }else if(workType == CustomDataClass.SEARCH_PICTURE) {
             String search_text = params[0];
             fetchSearchResults(search_text);
         }
@@ -89,6 +91,44 @@ public class NetworkActivity extends AsyncTask<String, Void, Void> {
         });
     }
 
+    private void fetchPictures(String album_name){
+
+
+//        BuiltQuery query = new BuiltQuery("picture");
+//
+//        query.where("album",album_name);
+//        query.exec(new QueryResultsCallBack() {
+//            List<BuiltObject> pictures;
+//            @Override
+//            public void onSuccess(QueryResult queryResultObject) {
+//                // the queryResultObject will contain the objects of the class
+//                // here's the object we just created
+//                pictures = queryResultObject.getResultObjects();
+//                for(BuiltObject object : pictures){
+//                    Log.i("Data","Name "+object.get("name"));
+//                    Log.i("Data","Title "+object.get("title"));
+//                }
+//            }
+//
+//            @Override
+//            public void onError(BuiltError builtErrorObject) {
+//                // query failed
+//                // the message, code and details of the error
+//                Log.i("error: ", "" + builtErrorObject.getErrorMessage());
+//                Log.i("error: ", "" + builtErrorObject.getErrorCode());
+//                Log.i("error: ", "" + builtErrorObject.getErrors());
+//            }
+//
+//            @Override
+//            public void onAlways() {
+//                // write code here that you want to execute
+//                // regardless of success or failure of the operation
+//                if(pictures.size() > 0){
+//                    ((AlbumActivity)activity).updatePictures(albums);
+//                }
+//            }
+//        });
+    }
 
     private void fetchData(){
         BuiltQuery query = new BuiltQuery("album");
@@ -102,7 +142,7 @@ public class NetworkActivity extends AsyncTask<String, Void, Void> {
                 albums = queryResultObject.getResultObjects();
                 for(BuiltObject object : albums){
                     Log.i("Data","Name "+object.get("name"));
-                    Log.i("Data","Title "+object.get("title"));
+                    Log.i("Data","Title "+object.get("description"));
                 }
             }
 
@@ -169,7 +209,7 @@ public class NetworkActivity extends AsyncTask<String, Void, Void> {
                 pictures = queryResultObject.getResultObjects();
                 for(BuiltObject object : pictures){
                     Log.i("Data","Name "+object.get("name"));
-                    Log.i("Data","Title "+object.get("title"));
+                    Log.i("Data","Caption "+object.get("caption"));
                 }
             }
 
