@@ -10,7 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.example.supportedfiles.AlbumClass;
 import com.example.supportedfiles.GridAlbumViewAdapter;
@@ -26,37 +28,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PictureViewActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener, AbsListView.OnScrollListener {
+public class PictureViewActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     private String album_name;
     private List<PictureClass> dataItems;
     private GridPictureViewAdapter adapter;
     private GridView view;
-    private int pageNumber;
+    private Button left,right;
+    private TextView textView;
+    private int page_number;
+    private int totalObjects;
+    private final static int LIMIT = 12;
+    private int totalPage ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture_view);
 
-        pageNumber = 0;
+        page_number = 1;
         view = (GridView)findViewById(R.id.gridView3);
-        view.setOnScrollListener(this);
+        //view.setOnScrollListener(this);
 
+        left = (Button)findViewById(R.id.button2);
+        right = (Button)findViewById(R.id.button3);
+        textView = (TextView)findViewById(R.id.textView);
 
         dataItems = new ArrayList<PictureClass>();
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             album_name = extras.getString("album_name");
-            fetchPictures(album_name,0);
+            fetchPictures(0);
         }
+
+        textView.setText("Page 0/0");
     }
 
-    private void fetchPictures(String album_name,int skipSize) {
+    private void fetchPictures(int skipSize) {
         BuiltQuery query = new BuiltQuery("picture");
 
         query.where("album",album_name);
-        query.limit(4);
+        query.limit(LIMIT);
         query.skip(skipSize);
 
         query.exec(new QueryResultsCallBack() {
@@ -70,6 +82,9 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
                     Log.i("Data", "Name " + object.get("name"));
                     Log.i("Data","Title "+object.get("caption"));
                 }
+                totalObjects = pictures.size();
+                totalPage = (int)Math.ceil(totalObjects/(double)LIMIT);
+
             }
 
             @Override
@@ -108,6 +123,8 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
 
+        textView.setText("Page "+page_number+" of "+totalPage);
+
 
     }
         @Override
@@ -145,24 +162,35 @@ public class PictureViewActivity extends Activity implements AdapterView.OnItemC
 //        pictureIntent.putExtra("album_name",objAlbum.title);
 //        startActivity(pictureIntent);
 
+        Log.i("Position"," "+position);
+        PictureClass objPicture = dataItems.get(position);
+//        if(objAlbum!=null){
+//            NetworkActivity pictureNetworkActivity = new NetworkActivity(CustomDataClass.FETCH_PICTURE,AlbumActivity.this,builtUserObject);
+//            pictureNetworkActivity.execute(objAlbum.title);
+//        }
+        Intent pictureIntent = new Intent(this,PictureViewActivity.class);
+        pictureIntent.putExtra("album_name",objPicture.name);
+        startActivity(pictureIntent);
+
 
     }
+
+
 
     @Override
     public void onClick(View v) {
 
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-       ++pageNumber;
-        int skipLimit = pageNumber*4;
-
-        fetchPictures(album_name,++pageNumber);
+        if(v.getId() == R.id.button3 && page_number<totalPage){
+            dataItems.clear();
+            page_number++;
+            int skipSize = (page_number-1) * LIMIT;
+            fetchPictures(skipSize);
+        }
+        else if(v.getId() == R.id.button2 && page_number>1){
+            dataItems.clear();
+            page_number--;
+            int skipSize = (page_number-1)*LIMIT;
+            fetchPictures(skipSize);
+        }
     }
 }
