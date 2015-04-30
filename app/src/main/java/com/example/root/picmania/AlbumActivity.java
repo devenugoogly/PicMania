@@ -41,7 +41,7 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
     private int page_number;
     private Button left,right;
     private TextView textView;
-    private int totalPageCount;
+    private int totalObjects;
     private final static int LIMIT = 12;
 
     @Override
@@ -77,7 +77,7 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
                 // here's the object we just created
                 albums = queryResultObject.getResultObjects();
                 Log.i("Count", " " + queryResultObject.getCount());
-                totalPageCount = queryResultObject.getCount();
+                totalObjects = queryResultObject.getCount();
 
                 for(BuiltObject object : albums){
                     Log.i("Data","Name "+object.get("name"));
@@ -135,7 +135,8 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
 
 
     public void updateData(List<BuiltObject> albums){
-
+        int displayPage = page_number+1;
+        int totalPage = (int)Math.ceil(totalObjects/(double)LIMIT);
         for(BuiltObject obj : albums){
             AlbumClass objAlbum = new AlbumClass(obj.get("name").toString(),obj.get("description").toString(),getDrawable(R.drawable.album));
             dataItems.add(objAlbum);
@@ -146,7 +147,7 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
 
-        textView.setText("Page "+page_number+1+" of "+totalPageCount/LIMIT);
+        textView.setText("Page "+displayPage+" of "+totalPage);
 
     }
 
@@ -172,13 +173,13 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
         if(v.getId() == R.id.button3){
             dataItems.clear();
             page_number++;
-            int skipSize = page_number*2;
+            int skipSize = page_number*LIMIT;
             fetchData(skipSize);
         }
         else if(v.getId() == R.id.button2){
             dataItems.clear();
             page_number--;
-            int skipSize = page_number*2;
+            int skipSize = page_number*LIMIT;
             fetchData(skipSize);
         }
     }
