@@ -37,6 +37,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/caption"
         android:text="@string/hello_world"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:textSize="32sp"
         />
 
     <ListView
