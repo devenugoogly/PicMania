@@ -43,12 +43,13 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
     private TextView textView;
     private int totalObjects;
     private final static int LIMIT = 12;
+    private int totalPage ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
-        page_number = 0;
+        page_number = 1;
 
         left = (Button)findViewById(R.id.button2);
         right = (Button)findViewById(R.id.button3);
@@ -59,6 +60,8 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
 
         dataItems = new ArrayList<AlbumClass>();
         textView.setText("Page 0/0");
+
+
         fetchData(0);
     }
 
@@ -78,7 +81,7 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
                 albums = queryResultObject.getResultObjects();
                 Log.i("Count", " " + queryResultObject.getCount());
                 totalObjects = queryResultObject.getCount();
-
+                totalPage = (int)Math.ceil(totalObjects/(double)LIMIT);
                 for(BuiltObject object : albums){
                     Log.i("Data","Name "+object.get("name"));
                     Log.i("Data","Title "+object.get("description"));
@@ -135,8 +138,8 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
 
 
     public void updateData(List<BuiltObject> albums){
-        int displayPage = page_number+1;
-        int totalPage = (int)Math.ceil(totalObjects/(double)LIMIT);
+
+
         for(BuiltObject obj : albums){
             AlbumClass objAlbum = new AlbumClass(obj.get("name").toString(),obj.get("description").toString(),getDrawable(R.drawable.album));
             dataItems.add(objAlbum);
@@ -147,7 +150,7 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
 
-        textView.setText("Page "+displayPage+" of "+totalPage);
+        textView.setText("Page "+page_number+" of "+totalPage);
 
     }
 
@@ -170,16 +173,16 @@ public class AlbumActivity extends Activity implements AdapterView.OnItemClickLi
     @Override
     public void onClick(View v) {
 
-        if(v.getId() == R.id.button3){
-            dataItems.clear();
-            page_number++;
-            int skipSize = page_number*LIMIT;
-            fetchData(skipSize);
+        if(v.getId() == R.id.button3 && page_number<totalPage){
+                dataItems.clear();
+                page_number++;
+                int skipSize = (page_number-1) * LIMIT;
+                fetchData(skipSize);
         }
-        else if(v.getId() == R.id.button2){
+        else if(v.getId() == R.id.button2 && page_number>1){
             dataItems.clear();
             page_number--;
-            int skipSize = page_number*LIMIT;
+            int skipSize = (page_number-1)*LIMIT;
             fetchData(skipSize);
         }
     }

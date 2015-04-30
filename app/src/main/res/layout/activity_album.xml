@@ -15,7 +15,7 @@
         android:layout_alignParentEnd="true"
         android:numColumns="3"
         android:transitionGroup="true"
-        android:fastScrollAlwaysVisible="true" />
+        android:fastScrollAlwaysVisible="false" />
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -25,18 +25,21 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Left"
         android:id="@+id/button2"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/previous"
+        android:height="32dp"
+        android:width="32dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Right"
         android:id="@+id/button3"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:background="@drawable/next"
+        android:width="32dp" />
 
     <TextView
         android:layout_width="wrap_content"
